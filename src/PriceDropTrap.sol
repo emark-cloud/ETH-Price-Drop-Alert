@@ -20,7 +20,7 @@ interface IAggregatorV3 {
 /// @dev Uses Chainlink-style price feeds with 8 decimals on answer
 contract PriceDropTrap is ITrap {
     // Hardcoded for Drosera (no constructor args)
-    address public constant PRICE_FEED = 0x1234567890123456789012345678901234567890; // <- replace with real Chainlink feed
+    address public constant PRICE_FEED = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419; // <- replace with real Chainlink feed
     int256  public constant MIN_PRICE  = 1500e8; // $1,500 with 8 decimals
 
     struct CollectOutput {

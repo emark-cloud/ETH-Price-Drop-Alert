@@ -10,6 +10,7 @@ optimizer_runs = 200
 [fmt]
 line_length = 120
 
-[remappings]
-drosera-contracts = "lib/drosera-contracts/src"
-forge-std = "lib/forge-std/src"
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+    "drosera-contracts/=lib/contracts/src/"
+]

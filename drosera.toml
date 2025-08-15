@@ -1,4 +1,6 @@
-# Minimal Drosera config for dry-runs and wiring
+# Drosera config for dry-run on Hoodi testnet
+ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
+
 [trap]
 source = "src/PriceDropTrap.sol:PriceDropTrap"
 collect_function = "collect()"
@@ -8,5 +10,5 @@ should_respond_function = "shouldRespond(bytes[])"
 source = "src/PriceDropResponse.sol:PriceDropResponse"
 response_function = "onIncident(int256)"
 
-# Optional: how often the node should call collect() in real runs
 collect_interval = "30s"
+

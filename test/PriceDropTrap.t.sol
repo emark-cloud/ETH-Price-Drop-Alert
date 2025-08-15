@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
@@ -7,43 +6,40 @@ import "../src/PriceDropTrap.sol";
 contract PriceDropTrapTest is Test {
     PriceDropTrap trap;
 
-    // Set up runs before each test
     function setUp() public {
-        // Deploy the trap with example constructor args
-        trap = new PriceDropTrap(
-            /* chainlinkFeed= */ 0x0000000000000000000000000000000000000000, 
-            /* dropThreshold= */ 5e16 // 5% drop threshold
-        );
+        trap = new PriceDropTrap();
+        // Set an initial lastPrice so drop detection works
+        trap.setLastPrice(2000 * 1e8); // Example: $2000
     }
 
-    function testCollectAndShouldRespondTrue() public {
-        // Simulate collecting trap data
-        bytes memory collected = trap.collect();
+    function testShouldRespondOnPriceDrop() public {
+        // Encode the new price into bytes
+        int256 newPrice = 1900 * 1e8; // Example: $1900, drop of $100
+        bytes memory collected = abi.encode(newPrice);
 
-        // Pack it into a bytes[] array
+        // Create bytes[] array with one element
         bytes ;
         arr[0] = collected;
 
-        // Call shouldRespond with the collected data
+        // Call shouldRespond
         (bool should, bytes memory resp) = trap.shouldRespond(arr);
 
-        // Example expectations (adjust to match your trap logic)
-        assertTrue(should, "Trap should trigger");
-        assertGt(resp.length, 0, "Response should not be empty");
+        assertTrue(should, "Should trigger on $100 drop");
+        assertEq(abi.decode(resp, (int256)), newPrice);
     }
 
-    function testCollectAndShouldRespondFalse() public {
-        // Manipulate state so trap shouldn't trigger
-        // (Adjust this to your trap logic, e.g., no price drop)
-        vm.warp(block.timestamp + 1 days); 
+    function testShouldNotRespondOnSmallDrop() public {
+        // Encode the new price into bytes
+        int256 newPrice = 1980 * 1e8; // Example: $1980, drop of $20
+        bytes memory collected = abi.encode(newPrice);
 
-        bytes memory collected = trap.collect();
-
+        // Create bytes[] array with one element
         bytes ;
         arr[0] = collected;
 
+        // Call shouldRespond
         (bool should, ) = trap.shouldRespond(arr);
-        assertFalse(should, "Trap should not trigger");
+
+        assertFalse(should, "Should not trigger on small drop");
     }
 }
-

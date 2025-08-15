@@ -1,56 +1,30 @@
-# 🚨 Drosera ERC20 Spike Detection PoC
+# PriceDropTrap (Drosera Compatible)
 
-This repository contains a working Proof-of-Concept for detecting **ERC20 transfer spikes** using [Drosera](https://drosera.network), an onchain monitoring protocol for programmable security.
+A minimal Drosera Trap that triggers when ETH/USD falls below a threshold using a Chainlink-style price feed.
 
-## 🔧 Components
+## How it works
+- `collect()` reads the latest price from a hardcoded aggregator address (`PRICE_FEED`).
+- `shouldRespond()` triggers if `price < MIN_PRICE` (both use 8 decimals).
 
-- **Trap Contract**  
-  `ERC20TransferSpikeTrap.sol`  
-  → Watches ERC20 transfers and detects large, sudden spikes in volume
+## Files
+- `src/PriceDropTrap.sol` — the trap
+- `src/PriceDropResponse.sol` — the response/handler
+- `test/PriceDropTrap.t.sol` — unit tests
+- `foundry.toml` — Foundry config
+- `drosera.toml` — Drosera wiring (trap + response)
+- `lib/` — install dependencies here
 
-- **Response Contract**  
-  `ERC20TransferSpikeResponse.sol`  
-  → Returns context information (volume/average) to the Drosera runtime
-
-- **Drosera Network**  
-  Using `drosera dryrun` to simulate and test spike events on-chain.
-
-## 📜 Deployed Contracts (Hoodi Testnet)
-
-| Type     | Address                                                                 |
-|----------|-------------------------------------------------------------------------|
-| Trap     | [`0x1C90a8D1...`](https://hoodi.etherscan.io/address/0x1C90a8D1f62D1587B3C46266b21430cF742BeC4e) |
-| Response | [`0x7788749c...`](https://hoodi.etherscan.io/address/0x7788749c85306f989393ba7b4A7DDA6920657D41) |
-
-## 🧪 Setup & Usage
+## Quickstart
 
 ```bash
-# Clone and install dependencies
-git clone https://github.com/EmilyMETH/drosera-spike-poc.git
-cd drosera-spike-poc
-forge install
+# Install Foundry if needed
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
 
-# Build & test
-forge build
-forge test
+# Init deps
+forge install drosera-network/drosera-contracts
+forge install foundry-rs/forge-std
 
-# Deploy manually (for dryrun)
-forge create src/ERC20TransferSpikeResponse.sol:ERC20TransferSpikeResponse \
-  --rpc-url https://ethereum-hoodi-rpc.publicnode.com \
-  --private-key $PRIVATE_KEY \
-  --broadcast
+# Run tests
+forge test -vv
 
-forge create src/ERC20TransferSpikeTrap.sol:ERC20TransferSpikeTrap \
-  --rpc-url https://ethereum-hoodi-rpc.publicnode.com \
-  --private-key $PRIVATE_KEY \
-  --broadcast
-
-# Dryrun
-drosera dryrun
-```
-
-## 📦 Dependency Pinned
-
-This PoC uses Drosera contracts pinned at commit [`3a89d13`](https://github.com/drosera-network/contracts/commit/3a89d1328300a8f3010e71d03b235808a542bd12) to ensure stable behavior and reproducibility.
-
-The contracts are installed as a Git submodule under `lib/contracts`.

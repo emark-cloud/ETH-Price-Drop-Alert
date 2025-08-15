@@ -1,14 +1,19 @@
 # Drosera config for dry-run on Hoodi testnet
 ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
+drosera_rpc = "https://relay.hoodi.drosera.io"
+eth_chain_id = 560048
+drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
 
-[trap]
-source = "src/PriceDropTrap.sol:PriceDropTrap"
-collect_function = "collect()"
-should_respond_function = "shouldRespond(bytes[])"
+[traps]
 
-[response]
-source = "src/PriceDropResponse.sol:PriceDropResponse"
+[traps.eth_price_drop]
+path = "out/PriceDropTrap.sol/PriceDropTrap.json"
+response_contract = "0x0000000000000000000000000000000000000000" 
 response_function = "onIncident(int256)"
-
-collect_interval = "30s"
+cooldown_period_blocks = 33
+min_number_of_operators = 1
+max_number_of_operators = 2
+block_sample_size = 2
+private_trap = false
+constructor_args = ["5"] # drop percentage threshold
 

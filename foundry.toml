@@ -5,8 +5,8 @@ libs = ["lib"]
 
 # Modern remappings
 remappings = [
-    "forge-std/=lib/forge-std/src/",
-    "drosera-contracts/=lib/contracts/src/"
+    "contracts/=lib/contracts/src/",
+    "forge-std/=lib/forge-std/src/"
 ]
 
 # Optional Solidity compiler settings

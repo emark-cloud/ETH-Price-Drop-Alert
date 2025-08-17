@@ -3,48 +3,52 @@ pragma solidity ^0.8.20;
 
 import {ITrap} from "drosera-contracts/interfaces/ITrap.sol";
 
-/// @title MintSpikeTrap
-/// @notice A simple Drosera trap that monitors mint spikes in an ERC20 token
-/// @dev Implements the ITrap interface
 contract MintSpikeTrap is ITrap {
-    /// @notice The ERC20 token being monitored
-    address public immutable token;
+    // Store whether a spike has been detected
+    bool private spikeTriggered;
 
-    /// @notice The threshold amount for detecting a mint spike
-    uint256 public immutable mintThreshold;
-
-    /// @param _token The ERC20 token to monitor
-    /// @param _mintThreshold The threshold at which a mint spike is flagged
-    constructor(address _token, uint256 _mintThreshold) {
-        token = _token;
-        mintThreshold = _mintThreshold;
+    constructor() {
+        spikeTriggered = false;
     }
 
-    // ---------------------------
-    // ITrap interface
-    // ---------------------------
+    /// @notice Called by Drosera to check conditions
+    function check(bytes calldata data)
+        external
+        view
+        override
+        returns (bool triggered, bytes memory responseData)
+    {
+        // For now, just decode a bool from `data`
+        bool condition = abi.decode(data, (bool));
+        return (condition, abi.encode(condition));
+    }
 
-    /// @inheritdoc ITrap
-    function check(bytes calldata data) external view override returns (bool triggered, bytes memory responseData) {
-        // Example logic (to replace with your own):
-        // data might include the amount minted (from offchain monitor or hook)
-        if (data.length == 32) {
-            uint256 mintedAmount = abi.decode(data, (uint256));
-            if (mintedAmount >= mintThreshold) {
-                return (true, abi.encode(mintedAmount));
+    /// @notice Return any data collected by the trap
+    function collect() external view override returns (bytes memory) {
+        return abi.encode(spikeTriggered);
+    }
+
+    /// @notice Decide whether to respond based on an array of data
+    function shouldRespond(bytes[] calldata data)
+        external
+        pure
+        override
+        returns (bool, bytes memory)
+    {
+        // Simple logic: respond if any data entry decodes to true
+        for (uint i = 0; i < data.length; i++) {
+            bool condition = abi.decode(data[i], (bool));
+            if (condition) {
+                return (true, abi.encode(condition));
             }
         }
-
-        // Default: no trigger
-        return (false, bytes(""));
+        return (false, abi.encode(false));
     }
 
-    /// @inheritdoc ITrap
     function name() external pure override returns (string memory) {
         return "MintSpikeTrap";
     }
 
-    /// @inheritdoc ITrap
     function version() external pure override returns (string memory) {
         return "1.0.0";
     }

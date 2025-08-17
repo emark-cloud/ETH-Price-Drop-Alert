@@ -6,7 +6,6 @@ import "forge-std/Test.sol";
 
 // ✅ Our contracts
 import "../src/MintSpikeTrap.sol";
-import "../src/MintSpikeResponse.sol";
 import "./MintableToken.sol";
 
 contract MintSpikeTrapTest is Test {

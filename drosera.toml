@@ -1,19 +1,28 @@
-# Drosera config for dry-run on Hoodi testnet
-ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
-drosera_rpc = "https://relay.hoodi.drosera.io"
-eth_chain_id = 560048
-drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
+version: 1
 
-[traps]
+network:
+  rpc: https://ethereum-hoodi-rpc.publicnode.com
+  chainId: 31337   # Hoodi testnet chainId (example, replace with actual if needed)
 
-[traps.eth_price_drop]
-path = "out/PriceDropTrap.sol/PriceDropTrap.json"
-response_contract = "0x0000000000000000000000000000000000000000" 
-response_function = "onIncident(int256)"
-cooldown_period_blocks = 33
-min_number_of_operators = 1
-max_number_of_operators = 2
-block_sample_size = 2
-private_trap = false
-constructor_args = ["5"] # drop percentage threshold
+trap:
+  name: MintSpikeTrap
+  address: "0xTRAP_CONTRACT_ADDRESS"     # replace after deploy
+  artifact: "out/MintSpikeTrap.sol/MintSpikeTrap.json"
+
+response:
+  name: MintSpikeResponse
+  address: "0xRESPONSE_CONTRACT_ADDRESS" # replace after deploy
+  artifact: "out/MintSpikeResponse.sol/MintSpikeResponse.json"
+
+settings:
+  token: "0xMINTABLE_TOKEN_ADDRESS"      # your deployed mintable ERC20
+  mintThreshold: "1000000000000000000000" # 1000 tokens (assuming 18 decimals)
+
+dryrun:
+  txs:
+    - from: "0xYOUR_TEST_WALLET"
+      to: "0xMINTABLE_TOKEN_ADDRESS"
+      data: "0x40c10f1900000000000000000000000012340000000000000000000000000000000000000000000000003782dace9d9000000"
+      # Encoded: mint(0x1234..., 10000000000000000000000)
+      # This amount is > threshold, so trap should fire
 

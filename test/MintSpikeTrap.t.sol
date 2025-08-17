@@ -1,35 +1,44 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.12;
 
 import "forge-std/Test.sol";
 import "../src/MintSpikeTrap.sol";
 
 contract MintSpikeTrapTest is Test {
     MintSpikeTrap trap;
+    address token = address(0x123);
+    address user1 = address(0x456);
+    address user2 = address(0x789);
 
     function setUp() public {
-        trap = new MintSpikeTrap();
+        trap = new MintSpikeTrap(token, user1, user2);
     }
 
-    function testCheckReturnsFalseInitially() public {
-        // pass `false` encoded
-        bytes memory input = abi.encode(false);
-        (bool triggered, bytes memory resp) = trap.check(input);
+    function testCollect() public {
+        bytes memory data = trap.collect();
+        (address _token, address _user1, address _user2) = abi.decode(data, (address, address, address));
 
-        assertFalse(triggered, "Trap should not trigger with false input");
-
-        bool decoded = abi.decode(resp, (bool));
-        assertFalse(decoded, "Response should also be false");
+        assertEq(_token, token);
+        assertEq(_user1, user1);
+        assertEq(_user2, user2);
     }
 
-    function testCheckTriggersAfterMint() public {
-        // pass `true` encoded
-        bytes memory input = abi.encode(true);
-        (bool triggered, bytes memory resp) = trap.check(input);
+    function testShouldRespondTrue() public {
+        bytes ;
+        input[0] = abi.encodePacked("hello");
 
-        assertTrue(triggered, "Trap should trigger with true input");
+        (bool triggered, bytes memory response) = trap.shouldRespond(input);
 
-        bool decoded = abi.decode(resp, (bool));
-        assertTrue(decoded, "Response should also be true");
+        assertTrue(triggered);
+        assertEq(response, input[0]);
+    }
+
+    function testShouldRespondFalse() public {
+        bytes ;
+
+        (bool triggered, bytes memory response) = trap.shouldRespond(input);
+
+        assertFalse(triggered);
+        assertEq(response.length, 0);
     }
 }

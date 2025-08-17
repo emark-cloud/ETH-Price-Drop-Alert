@@ -16,7 +16,10 @@ contract MintSpikeTrapTest is Test {
 
     function testCollect() public {
         bytes memory data = trap.collect();
-        (address _token, address _user1, address _user2) = abi.decode(data, (address, address, address));
+        (address _token, address _user1, address _user2) = abi.decode(
+            data,
+            (address, address, address)
+        );
 
         assertEq(_token, token);
         assertEq(_user1, user1);
@@ -24,23 +27,23 @@ contract MintSpikeTrapTest is Test {
     }
 
     function testShouldRespondTrue() public {
-        // ✅ Properly declare a dynamic array of bytes
+        // Correctly declare and initialize the input array
         bytes ;
         input[0] = abi.encodePacked("hello");
 
         (bool triggered, bytes memory response) = trap.shouldRespond(input);
 
-        assertTrue(triggered);
-        assertEq(response, input[0]);
+        assertTrue(triggered, "shouldRespond should trigger on data");
+        assertEq(response, input[0], "shouldRespond should return matching data");
     }
 
     function testShouldRespondFalse() public {
-        // ✅ Empty array
+        // Empty input array
         bytes ;
 
         (bool triggered, bytes memory response) = trap.shouldRespond(input);
 
-        assertFalse(triggered);
-        assertEq(response.length, 0);
+        assertFalse(triggered, "shouldRespond should not trigger with no data");
+        assertEq(response.length, 0, "Response should be empty");
     }
 }

@@ -7,25 +7,29 @@ import "../src/MintSpikeTrap.sol";
 contract MintSpikeTrapTest is Test {
     MintSpikeTrap trap;
 
-    address user1 = address(0x123);
-    address user2 = address(0x456);
-
     function setUp() public {
         trap = new MintSpikeTrap();
     }
 
     function testCheckReturnsFalseInitially() public {
-        bytes memory data = trap.check(user1, user2, "");
-        bool triggered = abi.decode(data, (bool));
-        assertFalse(triggered, "Trap should not trigger initially");
+        // pass `false` encoded
+        bytes memory input = abi.encode(false);
+        (bool triggered, bytes memory resp) = trap.check(input);
+
+        assertFalse(triggered, "Trap should not trigger with false input");
+
+        bool decoded = abi.decode(resp, (bool));
+        assertFalse(decoded, "Response should also be false");
     }
 
     function testCheckTriggersAfterMint() public {
-        // simulate a spike (just encode data manually for now)
-        bytes memory fakeData = abi.encode(true);
+        // pass `true` encoded
+        bytes memory input = abi.encode(true);
+        (bool triggered, bytes memory resp) = trap.check(input);
 
-        bytes memory result = trap.check(user1, user2, fakeData);
-        bool triggered = abi.decode(result, (bool));
-        assertTrue(triggered, "Trap should trigger after spike detected");
+        assertTrue(triggered, "Trap should trigger with true input");
+
+        bool decoded = abi.decode(resp, (bool));
+        assertTrue(decoded, "Response should also be true");
     }
 }

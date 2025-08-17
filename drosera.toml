@@ -1,28 +1,32 @@
-version: 1
+# RPC endpoints
+ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
+drosera_rpc  = "https://relay.hoodi.drosera.io"
 
-network:
-  rpc: https://ethereum-hoodi-rpc.publicnode.com
-  chainId: 31337   # Hoodi testnet chainId (example, replace with actual if needed)
+# Hoodi testnet chain
+eth_chain_id    = 560048
+drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
 
-trap:
-  name: MintSpikeTrap
-  address: "0xTRAP_CONTRACT_ADDRESS"     # replace after deploy
-  artifact: "out/MintSpikeTrap.sol/MintSpikeTrap.json"
+[traps]
 
-response:
-  name: MintSpikeResponse
-  address: "0xRESPONSE_CONTRACT_ADDRESS" # replace after deploy
-  artifact: "out/MintSpikeResponse.sol/MintSpikeResponse.json"
+[traps.mintspiketrap]
+# Path to the compiled trap artifact from forge build
+path = "out/MintSpikeTrap.sol/MintSpikeTrap.json"
 
-settings:
-  token: "0xMINTABLE_TOKEN_ADDRESS"      # your deployed mintable ERC20
-  mintThreshold: "1000000000000000000000" # 1000 tokens (assuming 18 decimals)
+# For dryrun, this can be a placeholder — replace after you deploy a responder
+response_contract = "0x0000000000000000000000000000000000000000"
+# Adjust to match the function your responder will expose
+response_function = "respond(bytes)"
 
-dryrun:
-  txs:
-    - from: "0xYOUR_TEST_WALLET"
-      to: "0xMINTABLE_TOKEN_ADDRESS"
-      data: "0x40c10f1900000000000000000000000012340000000000000000000000000000000000000000000000003782dace9d9000000"
-      # Encoded: mint(0x1234..., 10000000000000000000000)
-      # This amount is > threshold, so trap should fire
+# Trap parameters — tune for your tests
+cooldown_period_blocks = 33
+min_number_of_operators = 1
+max_number_of_operators = 2
+block_sample_size = 2
+private_trap = true
+
+# Use your Hoodi testnet wallet address here, or leave placeholder for dryrun
+whitelist = ["0x04C4762BB1923c55Ea782967D4CA78f42B4E21E5"]
+
+# Placeholder trap address (will change once you deploy it)
+address = "0x0000000000000000000000000000000000000000"
 

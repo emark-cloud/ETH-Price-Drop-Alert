@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+// ✅ Updated import paths
 import {DroseraResponse} from "drosera-contracts/response/DroseraResponse.sol";
 
 contract MintSpikeResponse is DroseraResponse {
@@ -19,3 +20,4 @@ contract MintSpikeResponse is DroseraResponse {
         lastEvent = MintEvent(to, amount, newTotalSupply);
     }
 }
+

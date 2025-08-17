@@ -1,55 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.12;
 
 import {ITrap} from "drosera-contracts/interfaces/ITrap.sol";
 
 contract MintSpikeTrap is ITrap {
-    // Store whether a spike has been detected
-    bool private spikeTriggered;
+    address public token;
+    address public user1;
+    address public user2;
 
-    constructor() {
-        spikeTriggered = false;
+    constructor(address _token, address _user1, address _user2) {
+        token = _token;
+        user1 = _user1;
+        user2 = _user2;
     }
 
-    /// @notice Called by Drosera to check conditions
-    function check(bytes calldata data)
-        external
-        view
-        override
-        returns (bool triggered, bytes memory responseData)
-    {
-        // For now, just decode a bool from `data`
-        bool condition = abi.decode(data, (bool));
-        return (condition, abi.encode(condition));
-    }
-
-    /// @notice Return any data collected by the trap
+    /// @notice Collect trap data
     function collect() external view override returns (bytes memory) {
-        return abi.encode(spikeTriggered);
+        return abi.encode(token, user1, user2);
     }
 
-    /// @notice Decide whether to respond based on an array of data
-    function shouldRespond(bytes[] calldata data)
-        external
-        pure
-        override
-        returns (bool, bytes memory)
-    {
-        // Simple logic: respond if any data entry decodes to true
-        for (uint i = 0; i < data.length; i++) {
-            bool condition = abi.decode(data[i], (bool));
-            if (condition) {
-                return (true, abi.encode(condition));
-            }
+    /// @notice Decide if trap should respond
+    function shouldRespond(bytes[] calldata data) external pure override returns (bool, bytes memory) {
+        // very basic example: always respond with first item if present
+        if (data.length > 0) {
+            return (true, data[0]);
         }
-        return (false, abi.encode(false));
-    }
-
-    function name() external pure override returns (string memory) {
-        return "MintSpikeTrap";
-    }
-
-    function version() external pure override returns (string memory) {
-        return "1.0.0";
+        return (false, "");
     }
 }

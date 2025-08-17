@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+// ✅ Updated import paths
 import {DroseraTrap} from "drosera-contracts/trap/DroseraTrap.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
 
 interface IMintableToken is IERC20 {
     function mint(address to, uint256 amount) external;
@@ -39,3 +40,4 @@ contract MintSpikeTrap is DroseraTrap {
         return false;
     }
 }
+

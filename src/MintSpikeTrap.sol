@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 // ✅ Corrected import path for DroseraTrap
-import {DroseraTrap} from "drosera-contracts/runtime/DroseraTrap.sol";
+import {DroseraTrap} from "drosera-contracts/trap/DroseraTrap.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
 
 interface IMintableToken is IERC20 {

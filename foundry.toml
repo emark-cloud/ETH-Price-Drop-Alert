@@ -3,6 +3,11 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+rpc_endpoints = { hoodi = "https://ethereum-hoodi-rpc.publicnode.com" }
+
+[networks]
+hoodi = { chain_id = 560048, url = "https://ethereum-hoodi-rpc.publicnode.com" }
+
 # Dependencies
 remappings = [
   "forge-std/=lib/forge-std/src/",

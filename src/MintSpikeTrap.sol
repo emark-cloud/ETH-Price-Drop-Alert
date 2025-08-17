@@ -1,42 +1,51 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-// ✅ Corrected import path for DroseraTrap
-import {DroseraTrap} from "drosera-contracts/trap/DroseraTrap.sol";
-import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
+import {ITrap} from "drosera-contracts/interfaces/ITrap.sol";
 
-interface IMintableToken is IERC20 {
-    function mint(address to, uint256 amount) external;
-    function totalSupply() external view returns (uint256);
-}
+/// @title MintSpikeTrap
+/// @notice A simple Drosera trap that monitors mint spikes in an ERC20 token
+/// @dev Implements the ITrap interface
+contract MintSpikeTrap is ITrap {
+    /// @notice The ERC20 token being monitored
+    address public immutable token;
 
-contract MintSpikeTrap is DroseraTrap {
-    IMintableToken public token;
-    uint256 public mintThreshold;
+    /// @notice The threshold amount for detecting a mint spike
+    uint256 public immutable mintThreshold;
 
+    /// @param _token The ERC20 token to monitor
+    /// @param _mintThreshold The threshold at which a mint spike is flagged
     constructor(address _token, uint256 _mintThreshold) {
-        token = IMintableToken(_token);
+        token = _token;
         mintThreshold = _mintThreshold;
     }
 
-    function checkTx(
-        address,
-        address to,
-        bytes calldata data
-    ) external override returns (bool) {
-        bytes4 selector = bytes4(data[:4]);
+    // ---------------------------
+    // ITrap interface
+    // ---------------------------
 
-        if (selector == token.mint.selector) {
-            (, uint256 amount) = abi.decode(data[4:], (address, uint256));
-
-            if (amount > mintThreshold) {
-                recordResponseData(
-                    abi.encode(to, amount, token.totalSupply() + amount)
-                );
-                return true;
+    /// @inheritdoc ITrap
+    function check(bytes calldata data) external view override returns (bool triggered, bytes memory responseData) {
+        // Example logic (to replace with your own):
+        // data might include the amount minted (from offchain monitor or hook)
+        if (data.length == 32) {
+            uint256 mintedAmount = abi.decode(data, (uint256));
+            if (mintedAmount >= mintThreshold) {
+                return (true, abi.encode(mintedAmount));
             }
         }
-        return false;
+
+        // Default: no trigger
+        return (false, bytes(""));
+    }
+
+    /// @inheritdoc ITrap
+    function name() external pure override returns (string memory) {
+        return "MintSpikeTrap";
+    }
+
+    /// @inheritdoc ITrap
+    function version() external pure override returns (string memory) {
+        return "1.0.0";
     }
 }
-

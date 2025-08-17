@@ -24,7 +24,7 @@ contract MintSpikeTrapTest is Test {
     }
 
     function testShouldRespondTrue() public {
-        // declare the array properly
+        // ✅ Properly declare a dynamic array of bytes
         bytes ;
         input[0] = abi.encodePacked("hello");
 
@@ -35,7 +35,7 @@ contract MintSpikeTrapTest is Test {
     }
 
     function testShouldRespondFalse() public {
-        // empty input array
+        // ✅ Empty array
         bytes ;
 
         (bool triggered, bytes memory response) = trap.shouldRespond(input);
@@ -44,4 +44,3 @@ contract MintSpikeTrapTest is Test {
         assertEq(response.length, 0);
     }
 }
-

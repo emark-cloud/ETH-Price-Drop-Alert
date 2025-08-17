@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 // ✅ Corrected import path for DroseraResponse
-import {DroseraResponse} from "drosera-contracts/runtime/DroseraResponse.sol";
+import {DroseraResponse} from "drosera-contracts/response/DroseraResponse.sol";
 
 contract MintSpikeResponse is DroseraResponse {
     struct MintEvent {

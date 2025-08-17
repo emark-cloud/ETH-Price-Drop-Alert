@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-// ✅ Updated import paths
-import {DroseraTrap} from "drosera-contracts/trap/DroseraTrap.sol";
+// ✅ Corrected import path for DroseraTrap
+import {DroseraTrap} from "drosera-contracts/runtime/DroseraTrap.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
 
 interface IMintableToken is IERC20 {
@@ -19,7 +19,6 @@ contract MintSpikeTrap is DroseraTrap {
         mintThreshold = _mintThreshold;
     }
 
-    /// @notice Drosera runtime calls this per tx
     function checkTx(
         address,
         address to,
